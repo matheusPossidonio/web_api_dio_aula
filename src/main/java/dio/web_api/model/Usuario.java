@@ -28,6 +28,12 @@ public class Usuario {
         this.username = username;
         this.password = password;
     }
+    public Integer getId() {
+        return id;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
     public String getName() {
         return name;
     }
@@ -50,6 +56,6 @@ public class Usuario {
     public String toString() {
         return "User [id=" + id + ", name=" + name + ", username=" + username + ", password=" + password + "]";
     }
-
+    
     
 }
