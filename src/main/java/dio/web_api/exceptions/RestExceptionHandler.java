@@ -10,12 +10,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestExceptionHandler extends ResponseEntityExceptionHandler{
 
     @ExceptionHandler(UserNotFoundException.class)
-    private ResponseEntity<String> UserNotFoundHandler(UserNotFoundException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    private ResponseEntity<RestErrorMessage> UserNotFoundHandler(UserNotFoundException e){
+        RestErrorMessage respostaTratada = new  RestErrorMessage(HttpStatus.NOT_FOUND,e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respostaTratada);
     }
     
     @ExceptionHandler(NullFieldException.class)
-    public ResponseEntity<String> handleNullFieldException(NullFieldException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    public ResponseEntity<RestErrorMessage> handleNullFieldException(NullFieldException e) {
+        RestErrorMessage respostaTratada = new  RestErrorMessage(HttpStatus.BAD_REQUEST,e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respostaTratada);
     }
 }
