@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import dio.web_api.exceptions.NullFieldException;
+import dio.web_api.exceptions.UserNotFoundException;
 import dio.web_api.model.Usuario;
 import dio.web_api.repository.UsuarioRepository;
 
@@ -38,21 +42,44 @@ public class UsuarioController {
         return new String("usuario add");
     }
     
-    @GetMapping("/users/{username}")
-    public Optional<Usuario> getOne(@PathVariable("username") String username){
-        return repository.findById(Integer.parseInt(username));
+    @GetMapping("/users/{id}")
+    public Optional<Usuario> getUserById(@PathVariable("id") String id){
+        int idUsuario = Integer.parseInt(id);
+
+        repository.findById(idUsuario)
+        .orElseThrow(UserNotFoundException::new);
+
+        return repository.findById(idUsuario);
     }
+
 
     @SuppressWarnings("null")
     @DeleteMapping("/users/{id}")
-    public void deleteUser(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Integer id) {
+        repository.findById(id)
+        .orElseThrow(UserNotFoundException::new);
+        
         repository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
     
-    @SuppressWarnings("null")
     @PostMapping("/users")
-    public void postUser(@RequestBody Usuario usuario) {
+    public ResponseEntity<Void> postUser(@RequestBody Usuario usuario) {
+        if(usuario.getId() == null ){
+            throw new NullFieldException("O campo id esta vazio");
+        }
+        if(usuario.getName() == null || usuario.getName().isEmpty()){
+            throw new NullFieldException("O campo nome esta vazio");
+        }
+        if(usuario.getUsername() == null || usuario.getUsername().isEmpty()){
+            throw new NullFieldException("O campo UserName esta vazio");
+        }
+        if(usuario.getPassword() == null || usuario.getPassword().isEmpty()){
+            throw new NullFieldException("O campo senha  esta vazio");
+        }
+
         repository.save(usuario);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     
 }
